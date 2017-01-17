@@ -5,6 +5,7 @@ REVISION	:= $(shell git rev-parse --short HEAD)
 SRCS		:= $(shell find . -type f -name '*.go')
 LDFLAGS	:= -ldflags="-s -w -X \"main.Version=$(VERSION)\" -X \"main.Revision=$(REVISION)\" -extldflags \"-static\""
 
+.DEFAULT_GOAL := bin/jira
 
 .PHONY: glide
 glide:
@@ -21,8 +22,6 @@ deps: glide
 	glide install -v
 
 bin/$(NAME): $(SRCS)
-	which go
-	go version
 	go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o bin/$(NAME)
 
 .PHONY: install
