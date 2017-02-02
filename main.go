@@ -11,12 +11,18 @@ var (
 )
 
 func main() {
-    jiraClient, _ := jira.NewClient(nil, "https://issues.apache.org/jira/")
-    issue, _, _ := jiraClient.Issue.Get("MESOS-3325")
+  jiraClient, _ := jira.NewClient(nil, "https://jira.atlassian.com/")
+  req, _ := jiraClient.NewRequest("GET", "/rest/api/2/project", nil)
 
-    fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
-    fmt.Printf("Type: %s\n", issue.Fields.Type.Name)
-    fmt.Printf("Priority: %s\n", issue.Fields.Priority.Name)
+  projects := new([]jira.Project)
+  _, err := jiraClient.Do(req, projects)
+  if err != nil {
+      panic(err)
+  }
+
+  for _, project := range *projects {
+      fmt.Printf("%s: %s\n", project.Key, project.Name)
+  }
 
     // MESOS-3325: Running mesos-slave@0.23 in a container causes slave to be lost after a restart
     // Type: Bug
